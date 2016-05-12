@@ -1,0 +1,8 @@
+2016/05/11 10:32:56 /home/iven/gowork/src/godemo/web/router/simple_web.go:15: path: /
+2016/05/11 10:32:56 /home/iven/gowork/src/godemo/web/router/simple_web.go:15: path: /favicon.ico
+2016/05/11 10:33:43 /home/iven/gowork/src/godemo/web/router/simple_web.go:15: path: /hello
+2016/05/11 10:33:43 /home/iven/gowork/src/godemo/web/router/simple_web.go:15: path: /favicon.ico
+2016/05/11 10:33:48 /home/iven/gowork/src/godemo/web/router/simple_web.go:15: path: /hello/gg
+2016/05/11 10:33:48 /home/iven/gowork/src/godemo/web/router/simple_web.go:15: path: /favicon.ico
+2016/05/11 10:33:53 /home/iven/gowork/src/godemo/web/router/simple_web.go:15: path: /hello/gg/aaa
+2016/05/11 10:33:53 /home/iven/gowork/src/godemo/web/router/simple_web.go:15: path: /favicon.ico
