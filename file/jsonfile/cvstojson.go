@@ -32,7 +32,7 @@ type Tool struct {
 
 func CsvToJson(readPath string,writePath string) error {
 	tool := new(Tool)
-	tool.Rows = 100
+	tool.Rows = 5
 	tool.Buffer = make(chan string, tool.Rows)
 	tool.Signal = make(chan int)
 	tool.Wait.Add(1)
@@ -43,9 +43,11 @@ func CsvToJson(readPath string,writePath string) error {
 	if readErr != nil {
 		return readErr
 	}
+
 	if writeErr != nil {
 		return writeErr
 	}
+
 	go ReadToFile(tool)
 	//go Notify(tool)
 	tool.Wait.Wait()
@@ -74,6 +76,7 @@ func ReadToFile(tool *Tool) {
 				//tool.Mu.Unlock()
 				if i == tool.Rows {
 					//tool.Signal <- 1
+					//println(i)
 					WriteToFile(tool)
 					i = 1
 				}
@@ -86,7 +89,7 @@ func ReadToFile(tool *Tool) {
 
 
 func WriteToFile(tool *Tool) {
-	for i := 0; i < tool.Rows-1 ; i ++{
+	for i := 0; i < tool.Rows -1 ; i ++{
 		line := <-tool.Buffer
 
 		if line == "" {
@@ -112,7 +115,6 @@ func WriteToFile(tool *Tool) {
 	}
 
 	if tool.End {
-		println(tool.End)
 		tool.ReadFile.Close()
 		tool.WriteFile.Close()
 

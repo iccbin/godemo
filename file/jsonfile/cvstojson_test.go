@@ -6,7 +6,7 @@ import (
 )
 
 func TestCsvToJson(t *testing.T) {
-		err := CsvToJson("/home/iven/Desktop/gotest.csv","/home/iven/Desktop/gotest.json")
+		err := CsvToJson("/home/iven/Desktop/gotest1.csv","/home/iven/Desktop/gotest.json")
 
 		if err != nil {
 			fmt.Println(err.Error())
@@ -16,6 +16,6 @@ func TestCsvToJson(t *testing.T) {
 
 func BenchmarkCsvToJson(b *testing.B) {
 
-	CsvToJson("/home/iven/Desktop/gotest.csv","/home/iven/Desktop/gotest.json")
+	CsvToJson("/home/iven/Desktop/gotest1.csv","/home/iven/Desktop/gotest.json")
 
 }
