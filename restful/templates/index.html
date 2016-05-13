@@ -15,7 +15,7 @@
 </div>
 
 <div>
-    <form action="/article/find" method="post">
+    <form action="/articles" method="post">
         <input id="key" type="text" name="key" placeholder="查询">
         <input type="submit" value="查询" >
     </form>
@@ -30,7 +30,7 @@
             <th>操作</th>
         </tr>
         {{range .articles}}
-        <tr>
+        <tr id="{{.Id}}">
             <td>{{.Title}}</td>
             <td>{{.Content}}</td>
             <td>
@@ -53,11 +53,12 @@
 <script>
     $(document).ready(function () {
         $(".delete").click(function () {
+
             $.ajax({
                 url: 'articles/1',
                 type: 'DELETE',
                 success: function (response) {
-                    alert('delete success')
+
                 }
             });
 
