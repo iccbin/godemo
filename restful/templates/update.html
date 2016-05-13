@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/article/update/{{.article.Id}}" method="post">
+    <input type="text" value="{{.article.Title}}" name="title">
+    <input type="text" value="{{.article.Content}}" name="content">
+    <input type="submit" value="修改">
+</form>
+</body>
+</html>
