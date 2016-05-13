@@ -2,14 +2,14 @@ package main
 
 import (
 
-	//"html/template"
 	"github.com/gin-gonic/gin"
-	"gostudy/restful/controllers"
+	"godemo/restful/controllers"
 )
 
 func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*")
+	//router.GET("/", func(c *gin.Context) {c.String(http.StatusOK,"ttt")})
 	router.GET("/", controllers.Index)
 	router.POST("/articles", controllers.ArticleAdd)
 	router.DELETE("/articles/:id", controllers.ArticleDelete)
@@ -26,5 +26,6 @@ func main() {
 	//router.POST("/article/update/:id", controllers.ArticleUp)
 	////查找文章
 	//router.POST("/article/find", controllers.ArticleFind)
-	router.Run(":4000")
+
+	router.Run(":9000")
 }

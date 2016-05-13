@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{.title}}</title>
-    <script ></script>
+
 </head>
 <body>
 <div>
@@ -34,21 +34,43 @@
             <td>{{.Title}}</td>
             <td>{{.Content}}</td>
             <td>
-                <a href="javascript:void(0);" onclick="delete()" >删除</a>
+
+                <input type="button" value="删除" class="delete">
+                <!--<a href="article/{{.Id}}">删除</a>-->
                 <!--<form action="/articles/{{.Id}}" method="post">-->
                     <!--<input type="hidden" name="_method" value="DELETE">-->
                     <!--<input type="submit" value="删除">-->
                 <!--</form>|-->
-                <a href="article/{{.Id}}">修改</a>
+                <!--<a href="article/{{.Id}}">修改</a>-->
             </td>
         </tr>
         {{end}}
     </table>
 </div>
+<p id="pid">adfdadfadsf</p>
 
-<script type="javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script>
+    $(document).ready(function () {
+        $(".delete").click(function () {
+            $.ajax({
+                url: 'articles/1',
+                type: 'DELETE',
+                success: function (response) {
+                    alert('delete success')
+                }
+            });
+
+        });
+
+        $("#pid").click(function(){
+            alert("Text:");
+        });
+
+    });
 
 </script>
+
 </body>
+
 </html>
