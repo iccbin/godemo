@@ -3,11 +3,10 @@ package controllers
 import (
 
 	"net/http"
-	"fmt"
 	"strconv"
 	"github.com/gin-gonic/gin"
 
-	"gostudy/restful/models"
+	"godemo/restful/models"
 )
 
 func Index(c *gin.Context){
@@ -39,9 +38,8 @@ func ArticleDelete(c *gin.Context)  {
 	if err!=nil {
 		c.String(http.StatusOK, err.Error())
 	} else {
-		c.Redirect(http.StatusMovedPermanently,"/")
+		c.String(http.StatusOK, "ok")
 	}
-	c.String(http.StatusOK, "adds")
 
 }
 
@@ -49,22 +47,23 @@ func ArticleUpdate(c *gin.Context){
 	articleId,_ := strconv.Atoi(c.Param("id"))
 	article := models.Article{Id:articleId}
 	title := c.PostForm("title")
-	fmt.Println(title)
-	if title != "" {
-		content := c.PostForm("content")
-		article.Title = title;
-		article.Content = content;
-		article.Update()
-		c.Redirect(http.StatusMovedPermanently,"/")
-	} else {
+	content := c.PostForm("content")
+	article.Title = title;
+	article.Content = content;
+	article.Update()
+	c.String(http.StatusOK, "ok")
 
-		article.Find()
-		c.HTML(http.StatusOK,"update.html",gin.H{
-			"title":"hello",
-			"article":article,
-		})
-	}
+}
 
+func ArticleGetEdit(c *gin.Context){
+	articleId,_ := strconv.Atoi(c.Param("id"))
+	article := models.Article{Id:articleId}
+
+	article.Find()
+	c.HTML(http.StatusOK,"update.html",gin.H{
+		"title":"hello",
+		"article":article,
+	})
 }
 
 func ArticleFind(c *gin.Context)  {

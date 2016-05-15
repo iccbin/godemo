@@ -13,8 +13,8 @@ func main() {
 	router.GET("/", controllers.Index)
 	router.POST("/articles", controllers.ArticleAdd)
 	router.DELETE("/articles/:id", controllers.ArticleDelete)
-	router.GET("/articles/:id", controllers.ArticleUpdate)
-	router.GET("/articles/:id/edit", controllers.ArticleUpdate)
+	router.GET("/articles/:key", controllers.ArticleFind)
+	router.GET("/articles-edit/:id", controllers.ArticleGetEdit)
 	router.PUT("/articles/:id",controllers.ArticleUpdate)
 	////添加文章
 	//router.POST("/article/add", controllers.ArticleAdd)
@@ -27,5 +27,5 @@ func main() {
 	////查找文章
 	//router.POST("/article/find", controllers.ArticleFind)
 
-	router.Run(":9000")
+	router.Run(":3001")
 }
