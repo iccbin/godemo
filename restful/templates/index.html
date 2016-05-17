@@ -15,7 +15,7 @@
 </div>
 
 <div>
-    <form action="/articles" method="post">
+    <form action="/articles" method="post" onsubmit="return validateForm()">
         <input id="key" type="text" name="key" placeholder="查询" onclick="">
         <input type="submit" value="查询" >
     </form>
@@ -46,6 +46,7 @@
 
 <script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script>
+
     function deleteArticle(id) {
         $.ajax({
 
