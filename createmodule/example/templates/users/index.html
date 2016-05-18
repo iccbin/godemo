@@ -5,6 +5,22 @@
     <title>Title</title>
 </head>
 <body>
+<div>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PASSWORD</th>
+        </tr>
+        {{range .users}}
+        <tr >
+            <td>{{.ID}}</td>
+            <td>{{.Name}}</td>
+            <td>{{.Password}}</td>
 
+        </tr>
+        {{end}}
+    </table>
+</div>
 </body>
 </html>

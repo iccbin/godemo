@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"godemo/createmodule/example/config"
-	"godemo/createmodule/example/cotrollers"
+	"godemo/createmodule/example/controllers"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gin-gonic/gin"
@@ -24,8 +24,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	application := cotrollers.ApplicationController{DB: DB}
-	users := cotrollers.UsersController{application}
+	application := controllers.ApplicationController{DB: DB}
+	users := controllers.UsersController{application}
 
 	router.GET("/", users.Index)
 

@@ -1,0 +1,25 @@
+package controllers
+
+import (
+	"net/http"
+
+    "{{.ModelPath}}"
+
+	"github.com/gin-gonic/gin"
+)
+
+type {{.Name}}sController struct{
+
+	ApplicationController
+
+}
+
+func (ctrl {{.Name}}sController) Index(c *gin.Context) {
+
+	var {{.VarName}} []{{.ModelName}}
+    ctrl.DB.Model(&{{.ModelName}}{}).Find(&{{.VarName}})
+    c.HTML(http.StatusOK, "index.html", gin.H{
+    		"title" : "index",
+    		"{{.VarName}}" : {{.VarName}},
+    });
+}
