@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"os"
 	"strings"
+
 )
 
 func CreateHtml(rootPath string, modelInfo ModelInfo) error {
@@ -30,6 +31,18 @@ func CreateHtml(rootPath string, modelInfo ModelInfo) error {
 	return nil
 }
 
+//func CreateAll(rootPath string) error {
+//	tmpl,err  := template.ParseGlob("./*")
+//	if err != nil {
+//		return err
+//	}
+//	files := make([]string, 0, 30)
+//	filepath.Walk("./templates/", func(filename string, fi os.FileInfo, err error) {
+//
+//	})
+//	errTmpl := tmpl.ExecuteTemplate(file)
+//	return nil
+//}
 
 //func ToSlice(s string) string {
 //	return strings.ToLower(s) + "s"
