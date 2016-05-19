@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{print "{{.title}}"}}</title>
+</head>
+<body>
+<form  id="fileForm" >
+    {{range $key,$value := .FieldMap}}
+    <input type="text" value="{{.user.Name}}" name="name" id="title">
+    <input type="text" value="{{.user.Password}}" name="{{lower $key}}">
+
+    {{end}}
+</form>
+<button  onclick="put{{title .Name}}('{{print "{{.%s.ID}} .Name"}}');">提交</button>
+<script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    function put{{title .Name}}(data) {
+        $.ajax({
+            type:'PUT',
+            url: '/{{pluralize .Name}}/' + data,
+            data:$('#fileForm').serialize(),
+            success: function(response) {
+                window.location.href = "/"
+            }});
+    }
+</script>
+</body>
+
+</html>

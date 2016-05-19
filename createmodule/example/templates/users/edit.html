@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form  id="fileForm" >
+    <input type="text" value="{{.user.Name}}" name="name" id="title">
+    <input type="text" value="{{.user.Password}}" name="password">
+
+</form>
+<button  onclick="putUser('{{.user.ID}}');">提交</button>
+<script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    function putUser(data) {
+        $.ajax({
+            type:'PUT',
+            url: '/users/' + data,
+            data:$('#fileForm').serialize(),
+            success: function(response) {
+                window.location.href = "/"
+            }});
+    }
+</script>
+</body>
+
+</html>

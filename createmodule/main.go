@@ -1,71 +1,131 @@
 package main
 
 import (
-	"fmt"
-	"strings"
 	"io/ioutil"
+	"strings"
+	"text/template"
 	"os"
+	"fmt"
 	"reflect"
 
+
 	"godemo/createmodule/example/models"
-	"godemo/createmodule/code"
+
+	"github.com/chuckpreslar/inflect"
 )
 
-
-func main()  {
-
-	//modelInfo,err := code.ReflectModel(&models.Temp{}, "godemo/createmodule/example/models")
-	//if err != nil {
-	//	fmt.Println(err.Error())
-	//	return
-	//}
-	//modelInfo.ModelName = reflect.TypeOf(models.Temp{}).String()
-	//split := strings.Split(modelInfo.ModelName, ".")
-	//modelInfo.Name = split[1]
-	//modelInfo.VarName = strings.ToLower(modelInfo.Name) + "s"
-	//
-	//ctrlErr := code.CreateController( "example/controllers", modelInfo)
-	//if ctrlErr != nil {
-	//	fmt.Println(ctrlErr.Error())
-	//}
-	//
-	//htmlErr := code.CreateHtml("example/templates", modelInfo)
-	//if htmlErr != nil {
-	//	fmt.Println(htmlErr.Error())
-	//}
-	createCode()
-
+type ModelInfo struct {
+	Name string
+	FieldMap map[string]string
 }
 
-func createCode()  {
-	modelInfo,err := code.ReflectModel(&models.Temp{}, "godemo/createmodule/example/models")
-	if err != nil {
-		fmt.Println(err.Error())
-		return
+func CreateFile(modelInfo ModelInfo) error {
+
+	funcs := template.FuncMap{
+		"title" : strings.Title,
+		"pluralize" : inflect.Pluralize,
+		"lower" : strings.ToLower,
 	}
-	modelInfo.ModelName = reflect.TypeOf(models.Temp{}).String()
-	split := strings.Split(modelInfo.ModelName, ".")
-	modelInfo.Name = split[1]
-	modelInfo.VarName = strings.ToLower(modelInfo.Name) + "s"
 
-	code.CreateFile(modelInfo)
+	tmpl, err := template.New("").Funcs(funcs).ParseGlob("./templates/*")
+	if err != nil {
+		return err
+	}
+
+
+	files,err := ListFile("./templates/", ".tmpl")
+	if err != nil {
+		return err
+	}
+
+	for _,fileName := range files {
+
+		var newFileName string
+		if strings.Contains(fileName, "controller") {
+			newFileName = strings.TrimSuffix(fileName, "tmpl") + "go"
+		} else {
+			newFileName = strings.TrimSuffix(fileName, "tmpl") + "html"
+		}
+
+		file, err := os.OpenFile("./product/"+ newFileName, os.O_CREATE | os.O_RDWR, 0666)
+		if err != nil {
+			return err
+		}
+
+
+		errTmpl := tmpl.ExecuteTemplate(file, fileName, modelInfo)
+		if err != nil {
+			return errTmpl
+		}
+	}
+
+	return nil
 }
-func ListDir(dirPth string, suffix string) (files []string, err error) {
+
+
+func ListFile(dirPth string, suffix string) (files []string, err error) {
 	files = make([]string, 0, 10)
 	dir, err := ioutil.ReadDir(dirPth)
 	if err != nil {
 		return nil, err
 	}
-	PthSep := string(os.PathSeparator)
-	suffix = strings.ToUpper(suffix) //忽略后缀匹配的大小写
+
+	suffix = strings.ToUpper(suffix)
 	for _, fi := range dir {
-		if fi.IsDir() { // 忽略目录
+		if fi.IsDir() {
 			continue
 		}
-		if strings.HasSuffix(strings.ToUpper(fi.Name()), suffix) { //匹配文件
-			files = append(files, dirPth+PthSep+fi.Name())
-			fmt.Println(fi.Name())
+		if strings.HasSuffix(strings.ToUpper(fi.Name()), suffix) {
+
+			files = append(files, fi.Name())
 		}
 	}
 	return files, nil
+}
+
+
+
+func createCode()  {
+
+	modelInfo,err := ReflectModel(&models.User{})
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	split := strings.Split( reflect.TypeOf(models.User{}).String(), ".")
+	modelInfo.Name = strings.ToLower(split[1])
+
+	createErr := CreateFile(modelInfo)
+	if createErr != nil {
+		fmt.Println(createErr.Error())
+	}
+}
+
+
+func ReflectModel(i interface{}) (ctrl ModelInfo, err error) {
+
+	info := ModelInfo{}
+
+	val := reflect.ValueOf(i).Elem()
+
+	if val.Kind() != reflect.Struct {
+		return info, fmt.Errorf("interface kind is not struct")
+	}
+
+	info.FieldMap = make(map[string]string)
+	for i := 0; i < val.NumField(); i++ {
+		typeField := val.Type().Field(i)
+		info.FieldMap[typeField.Name] = typeField.Type.String()
+	}
+
+	return info, nil
+}
+
+func DealString(arg string) string {
+	return strings.ToLower(arg)
+}
+
+func main()  {
+	createCode()
 }

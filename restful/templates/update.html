@@ -19,12 +19,7 @@
             type:'PUT',
             url: '/articles/' + data,
             data:$('#fileForm').serialize(),
-            success: function(response) {
-                if (response == "ok"){
-                    alert("ok");
-                    $("#fileForm")[0].reset();
-                }
-            }});
+        });
     }
 
 

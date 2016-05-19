@@ -2,24 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{print "{{.title}}"}}</title>
 </head>
 <body>
+    <div>
+        <input id="key" type="text" name="key" placeholder="查询" >
+        <input type="button" value="查询" onclick="get{{pluralize (title .Name)}}()">
+    </div>
     <div>
         <table>
             <tr>
             {{range $key,$value := .FieldMap}}
                 <th>{{$key}}</th>
             {{end}}
+                <th>OPERATING</th>
             </tr>
             {{printf "{{range .%s}}" .Name}}
             <tr>
             {{range $key,$value := .FieldMap}}
                 <td>{{printf "{{.%s}}" $key}}</td>
             {{end}}
+                <td>
+                    <input type="button" value="添加" onclick="location.href='/{{pluralize .Name}}-new'">
+                    <input type="button" value="删除" class="delete" onclick="delete{{title .Name}}('{{print "{{.ID}}"}}')">
+                    <input type="button" value="编辑" onclick="location.href='/{{pluralize .Name}}-edit/{{print "{{.ID}}"}}'">
+                </td>
             </tr>
             {{printf "{{end}}"}}
         </table>
     </div>
+    <script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        function delete{{title .Name}}(id) {
+            $.ajax({
+                url: '/{{pluralize .Name}}/' + id,
+                type: 'DELETE',
+                success: function (response) {
+                    if (response == "ok"){
+                        var tr = document.getElementById(id);
+                        tr.remove();
+                    }
+                }
+            });
+        }
+
+        function get{{pluralize (title .Name)}}(){
+            var key = $('#key').val();
+            window.location.href = "/{{pluralize .Name}}/" + key
+
+        }
+
+
+    </script>
 </body>
 </html>
+

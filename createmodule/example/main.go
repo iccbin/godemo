@@ -7,8 +7,8 @@ import (
 	"godemo/createmodule/example/config"
 	"godemo/createmodule/example/controllers"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
 
@@ -27,7 +27,12 @@ func main() {
 	application := controllers.ApplicationController{DB: DB}
 	users := controllers.UsersController{application}
 
-	router.GET("/", users.Index)
-
+	router.Any("/", users.Index)
+	router.GET("/users-new", users.New)
+	router.POST("/users", users.Create)
+	router.DELETE("/users/:id", users.Delete)
+	router.GET("/users-edit/:id", users.Edit)
+	router.PUT("/users/:id", users.Update)
+	router.GET("/users/:key", users.Show)
 	router.Run(":3001")
 }
