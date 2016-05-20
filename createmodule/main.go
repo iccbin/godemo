@@ -17,17 +17,15 @@ import (
 type ModelInfo struct {
 	Name string
 	FieldMap map[string]string
+	ModelName string
+	PluralizeTitle string
+	PluralizeName string
+	UnderscoreName string
 }
 
 func CreateFile(modelInfo ModelInfo) error {
 
-	funcs := template.FuncMap{
-		"title" : strings.Title,
-		"pluralize" : inflect.Pluralize,
-		"lower" : strings.ToLower,
-	}
-
-	tmpl, err := template.New("").Funcs(funcs).ParseGlob("./templates/*")
+	tmpl, err := template.New("").Delims("[[","]]").ParseGlob("./templates/*")
 	if err != nil {
 		return err
 	}
@@ -85,27 +83,15 @@ func ListFile(dirPth string, suffix string) (files []string, err error) {
 
 
 
-func createCode()  {
-
-	modelInfo,err := ReflectModel(&models.User{})
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	split := strings.Split( reflect.TypeOf(models.User{}).String(), ".")
-	modelInfo.Name = strings.ToLower(split[1])
-
-	createErr := CreateFile(modelInfo)
-	if createErr != nil {
-		fmt.Println(createErr.Error())
-	}
-}
 
 
-func ReflectModel(i interface{}) (ctrl ModelInfo, err error) {
+func ReflectModel(name string, i interface{}) (ctrl ModelInfo, err error) {
 
-	info := ModelInfo{}
+	info := ModelInfo{Name:name}
+	info.ModelName = strings.Title(name)
+	info.PluralizeTitle = strings.Title(inflect.Pluralize(name))
+	info.PluralizeName = strings.ToLower(inflect.Pluralize(name))
+	info.UnderscoreName = strings.ToLower(name)
 
 	val := reflect.ValueOf(i).Elem()
 
@@ -116,16 +102,29 @@ func ReflectModel(i interface{}) (ctrl ModelInfo, err error) {
 	info.FieldMap = make(map[string]string)
 	for i := 0; i < val.NumField(); i++ {
 		typeField := val.Type().Field(i)
-		info.FieldMap[typeField.Name] = typeField.Type.String()
+		//info.FieldMap[typeField.Name] = typeField.Type.String()
+		info.FieldMap[typeField.Name] = strings.ToLower(typeField.Name)
 	}
 
 	return info, nil
 }
 
-func DealString(arg string) string {
-	return strings.ToLower(arg)
+func createCode(name string, i interface{})  {
+
+	modelInfo,err := ReflectModel(name, i)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	modelInfo.Name = name
+
+	createErr := CreateFile(modelInfo)
+	if createErr != nil {
+		fmt.Println(createErr.Error())
+	}
 }
 
 func main()  {
-	createCode()
+	createCode("user", &models.User{})
 }

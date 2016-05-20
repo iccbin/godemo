@@ -31,7 +31,10 @@ func (ctrl UsersController) New(c *gin.Context) {
 }
 
 func (ctrl UsersController) Create(c *gin.Context) {
-	user := models.User{Name: c.PostForm("name"), Password: c.PostForm("password")}
+	user := models.User{
+		Name: c.PostForm("name"),
+		Password: c.PostForm("password"),
+	}
 	ctrl.DB.NewRecord(user)
 	ctrl.DB.Create(&user)
 
@@ -69,7 +72,11 @@ func (ctrl UsersController) Update(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Param("id"))
 	name := c.PostForm("name")
 	password := c.PostForm("password")
-	user := models.User{ID: uint(userId), Name: name, Password: password}
+	user := models.User{
+		ID: uint(userId),
+		Name: name,
+		Password: password,
+	}
 
 	err := ctrl.DB.Save(&user).Error
 	if err != nil {
@@ -82,9 +89,9 @@ func (ctrl UsersController) Update(c *gin.Context) {
 
 func (ctrl UsersController) Show(c *gin.Context)  {
 	var users []models.User
-	ctrl.DB.Where("name LIKE ?", "%" + c.Param("key") + "%").Find(&users)
+	ctrl.DB.Where("id > ?", c.Param("key")).Find(&users)
 
-	c.HTML(http.StatusMovedPermanently,"show.html",gin.H{
+	c.HTML(http.StatusOK,"show.html",gin.H{
 		"title":"hello",
 		"users":users,
 	})

@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{print "{{.title}}"}}</title>
+    <title>{{.title}}</title>
 </head>
 <body>
-<form action="/{{pluralize .Name}}/" method="post">
-    {{$key,$value := range .FieldMap}}
-    <input name="{{lower $key}}" type="text">
-    {{end}}
+<form action="/[[.PluralizeName]]/" method="post">
+    [[range $key,$value := .FieldMap]]
+    <input name="[[$value]]" type="text">
+    [[end]]
     <input type="submit">
 </form>
 </body>

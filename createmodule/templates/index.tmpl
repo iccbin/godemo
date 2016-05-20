@@ -2,40 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{print "{{.title}}"}}</title>
+    <title>{{.title}}</title>
 </head>
 <body>
     <div>
         <input id="key" type="text" name="key" placeholder="查询" >
-        <input type="button" value="查询" onclick="get{{pluralize (title .Name)}}()">
+        <input type="button" value="查询" onclick="get[[.PluralizeTitle]]()">
     </div>
     <div>
         <table>
             <tr>
-            {{range $key,$value := .FieldMap}}
-                <th>{{$key}}</th>
-            {{end}}
+            [[range $key,$value := .FieldMap]]
+                <th>[[$key]]</th>
+            [[end]]
                 <th>OPERATING</th>
             </tr>
-            {{printf "{{range .%s}}" .Name}}
+            {{range .[[.PluralizeName]]}}
             <tr>
-            {{range $key,$value := .FieldMap}}
-                <td>{{printf "{{.%s}}" $key}}</td>
-            {{end}}
+            [[range $key,$value := .FieldMap]]
+                <td>{{.[[$key]]}}</td>
+            [[end]]
                 <td>
-                    <input type="button" value="添加" onclick="location.href='/{{pluralize .Name}}-new'">
-                    <input type="button" value="删除" class="delete" onclick="delete{{title .Name}}('{{print "{{.ID}}"}}')">
-                    <input type="button" value="编辑" onclick="location.href='/{{pluralize .Name}}-edit/{{print "{{.ID}}"}}'">
+                    <input type="button" value="添加" onclick="location.href='/[[.PluralizeName]]-new'">
+                    <input type="button" value="删除" class="delete" onclick="delete[[.ModelName]]('{{.ID}}')">
+                    <input type="button" value="编辑" onclick="location.href='/[[.PluralizeName]]-edit/{{.ID}}'">
                 </td>
             </tr>
-            {{printf "{{end}}"}}
+            {{end}}
         </table>
     </div>
     <script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script>
-        function delete{{title .Name}}(id) {
+        function delete[[.ModelName]](id) {
             $.ajax({
-                url: '/{{pluralize .Name}}/' + id,
+                url: '/[[.PluralizeName]]/' + id,
                 type: 'DELETE',
                 success: function (response) {
                     if (response == "ok"){
@@ -46,9 +46,9 @@
             });
         }
 
-        function get{{pluralize (title .Name)}}(){
+        function get[[.PluralizeTitle]](){
             var key = $('#key').val();
-            window.location.href = "/{{pluralize .Name}}/" + key
+            window.location.href = "/[[.PluralizeName]]/" + key
 
         }
 

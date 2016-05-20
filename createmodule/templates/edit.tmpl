@@ -2,27 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{print "{{.title}}"}}</title>
+    <title>{{.title}}</title>
 </head>
-<body>
-<form  id="fileForm" >
-    {{range $key,$value := .FieldMap}}
-    <input type="text" value="{{.user.Name}}" name="name" id="title">
-    <input type="text" value="{{.user.Password}}" name="{{lower $key}}">
 
-    {{end}}
+<body>
+<form  id="modelForm" >
+    [[$name := .UnderscoreName]]
+    [[range $key,$value := .FieldMap]]
+     <input type="text" value="{{.[[$name]].[[$key]]}}" name="[[$value]]">
+    [[end]]
 </form>
-<button  onclick="put{{title .Name}}('{{print "{{.%s.ID}} .Name"}}');">提交</button>
+<button  onclick="put[[.ModelName]]('{{.[[.ModelName]].ID}}');">提交</button>
 <script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script>
-    function put{{title .Name}}(data) {
+    function put[[.ModelName]](data) {
         $.ajax({
             type:'PUT',
-            url: '/{{pluralize .Name}}/' + data,
-            data:$('#fileForm').serialize(),
+            url: '/[[.PluralizeName]]/' + data,
+            data:$('#modelForm').serialize(),
             success: function(response) {
                 window.location.href = "/"
-            }});
+        }});
     }
 </script>
 </body>

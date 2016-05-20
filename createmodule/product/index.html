@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.title}}</title>
+</head>
+<body>
+    <div>
+        <input id="key" type="text" name="key" placeholder="查询" >
+        <input type="button" value="查询" onclick="getUsers()">
+    </div>
+    <div>
+        <table>
+            <tr>
+            
+                <th>ID</th>
+            
+                <th>Name</th>
+            
+                <th>Password</th>
+            
+                <th>OPERATING</th>
+            </tr>
+            {{range .users}}
+            <tr>
+            
+                <td>{{.ID}}</td>
+            
+                <td>{{.Name}}</td>
+            
+                <td>{{.Password}}</td>
+            
+                <td>
+                    <input type="button" value="添加" onclick="location.href='/users-new'">
+                    <input type="button" value="删除" class="delete" onclick="deleteUser('{{.ID}}')">
+                    <input type="button" value="编辑" onclick="location.href='/users-edit/{{.ID}}'">
+                </td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+    <script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        function deleteUser(id) {
+            $.ajax({
+                url: '/users/' + id,
+                type: 'DELETE',
+                success: function (response) {
+                    if (response == "ok"){
+                        var tr = document.getElementById(id);
+                        tr.remove();
+                    }
+                }
+            });
+        }
+
+        function getUsers(){
+            var key = $('#key').val();
+            window.location.href = "/users/" + key
+
+        }
+
+
+    </script>
+</body>
+</html>
+

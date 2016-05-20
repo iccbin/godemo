@@ -22,6 +22,7 @@ func (ctrl TempsController) Index(c *gin.Context) {
     		"title" : "index",
     		"temps" : temps,
     });
+
 }
 
 
