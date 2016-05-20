@@ -9,11 +9,17 @@
 <form  id="modelForm" >
     
     
-     <input type="text" value="{{.user.ID}}" name="id">
+     <input type="text" value="{{.user.Age}}" name="{int64 age}">
     
-     <input type="text" value="{{.user.Name}}" name="name">
+     <input type="text" value="{{.user.Gender}}" name="{bool gender}">
     
-     <input type="text" value="{{.user.Password}}" name="password">
+     <input type="text" value="{{.user.ID}}" name="{uint id}">
+    
+     <input type="text" value="{{.user.Money}}" name="{float64 money}">
+    
+     <input type="text" value="{{.user.Name}}" name="{string name}">
+    
+     <input type="text" value="{{.user.Password}}" name="{string password}">
     
 </form>
 <button  onclick="putUser('{{.User.ID}}');">提交</button>

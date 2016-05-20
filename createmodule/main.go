@@ -16,7 +16,7 @@ import (
 
 type ModelInfo struct {
 	Name string
-	FieldMap map[string]string
+	FieldMap map[string]interface{}
 	ModelName string
 	PluralizeTitle string
 	PluralizeName string
@@ -99,13 +99,16 @@ func ReflectModel(name string, i interface{}) (ctrl ModelInfo, err error) {
 		return info, fmt.Errorf("interface kind is not struct")
 	}
 
-	info.FieldMap = make(map[string]string)
+	info.FieldMap = make(map[string]interface{})
+	var typeInfo struct{Type string; Name string}
 	for i := 0; i < val.NumField(); i++ {
 		typeField := val.Type().Field(i)
-		//info.FieldMap[typeField.Name] = typeField.Type.String()
-		info.FieldMap[typeField.Name] = strings.ToLower(typeField.Name)
-	}
+		typeInfo.Type = typeField.Type.String()
+		typeInfo.Name = strings.ToLower(typeField.Name)
+		info.FieldMap[typeField.Name] = typeInfo
 
+	}
+	fmt.Println(info.FieldMap)
 	return info, nil
 }
 
@@ -126,5 +129,6 @@ func createCode(name string, i interface{})  {
 }
 
 func main()  {
+
 	createCode("user", &models.User{})
 }

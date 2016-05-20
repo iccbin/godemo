@@ -16,12 +16,16 @@ type UsersController struct {
 
 func (ctrl UsersController) Index(c *gin.Context) {
 	var users []models.User
-	ctrl.DB.Model(&models.User{}).Find(&users)
+	err := ctrl.DB.Model(&models.User{}).Find(&users).Error
+	if err != nil {
+		c.String(http.StatusOK, err.Error())
+	} else {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"title": "index",
+			"users": users,
+		})
+	}
 
-	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title": "index",
-		"users": users,
-	})
 }
 
 func (ctrl UsersController) New(c *gin.Context) {
@@ -31,14 +35,27 @@ func (ctrl UsersController) New(c *gin.Context) {
 }
 
 func (ctrl UsersController) Create(c *gin.Context) {
-	user := models.User{
-		Name: c.PostForm("name"),
-		Password: c.PostForm("password"),
+	money,err := strconv.ParseFloat(c.PostForm("money"), 64)
+	name := c.PostForm("name")
+	password := c.PostForm("password")
+	gender,err := strconv.ParseBool(c.PostForm("gender"))
+	if err != nil {
+		c.String(http.StatusOK, err.Error())
+		return
 	}
-	ctrl.DB.NewRecord(user)
-	ctrl.DB.Create(&user)
+	user := models.User{
+		Name: name,
+		Password: password,
+		Money:money,
+		Gender:gender,
+	}
+	err = ctrl.DB.Create(&user).Error
+	if err != nil {
+		c.String(http.StatusOK, "create user error")
+	} else {
+		c.Redirect(http.StatusMovedPermanently, "/")
+	}
 
-	c.Redirect(http.StatusMovedPermanently, "/")
 }
 
 func (ctrl UsersController) Delete(c *gin.Context) {
@@ -55,6 +72,7 @@ func (ctrl UsersController) Delete(c *gin.Context) {
 
 func (ctrl UsersController) Edit(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Param("id"))
+
 	user := models.User{ID: uint(userId)}
 
 	err := ctrl.DB.First(&user).Error
@@ -69,16 +87,24 @@ func (ctrl UsersController) Edit(c *gin.Context) {
 }
 
 func (ctrl UsersController) Update(c *gin.Context) {
-	userId, _ := strconv.Atoi(c.Param("id"))
+	userId, err := strconv.Atoi(c.Param("id"))
 	name := c.PostForm("name")
 	password := c.PostForm("password")
+	money, err := strconv.ParseFloat(c.PostForm("money"), 64)
+	gender, err := strconv.ParseBool(c.PostForm("gender"))
+	if err != nil {
+		c.String(http.StatusOK, err.Error())
+		return
+	}
 	user := models.User{
 		ID: uint(userId),
 		Name: name,
 		Password: password,
+		Money:money,
+		Gender:gender,
 	}
 
-	err := ctrl.DB.Save(&user).Error
+	err = ctrl.DB.Save(&user).Error
 	if err != nil {
 		c.String(http.StatusOK, err.Error())
 	} else {
@@ -88,36 +114,15 @@ func (ctrl UsersController) Update(c *gin.Context) {
 }
 
 func (ctrl UsersController) Show(c *gin.Context)  {
-	var users []models.User
-	ctrl.DB.Where("id > ?", c.Param("key")).Find(&users)
+	var user models.User
+	err := ctrl.DB.First(&user, c.Param("id")).Error
 
-	c.HTML(http.StatusOK,"show.html",gin.H{
-		"title":"hello",
-		"users":users,
-	})
-
+	if err != nil {
+		c.String(http.StatusOK, err.Error())
+	} else {
+		c.HTML(http.StatusOK,"show.html",gin.H{
+			"title":"hello",
+			"user":user,
+		})
+	}
 }
-
-//func (user *UsersController) Show(c *gin.Context) {
-//	c.HTML(http.StatusOK, "show.html", gin.H{
-//		"title" : "show",
-//	})
-//}
-//
-//func (user *UsersController) Create(c *gin.Context) {
-//	c.HTML(http.StatusOK, "show.html", gin.H{
-//		"title" : "show",
-//	})
-//}
-//
-//func (user *UsersController) Delete(c *gin.Context) {
-//	c.HTML(http.StatusOK, "show.html", gin.H{
-//		"title" : "show",
-//	})
-//}
-//
-//func (user *UsersController) Update(c *gin.Context) {
-//	c.HTML(http.StatusOK, "show.html", gin.H{
-//		"title" : "show",
-//	})
-//}

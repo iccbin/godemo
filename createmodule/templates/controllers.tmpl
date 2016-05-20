@@ -83,7 +83,7 @@ func (ctrl [[.PluralizeTitle]]Controller) Update(c *gin.Context) {
 
 func (ctrl [[.PluralizeTitle]]Controller) Show(c *gin.Context)  {
 	var [[.PluralizeName]] []models.[[.ModelName]]
-	ctrl.DB.Where("id > ?", c.Param("key")).Find(&[[.PluralizeName]])
+	ctrl.DB.Where("id = ?", c.Param("id")).Find(&[[.PluralizeName]])
 
 	c.HTML(http.StatusOK,"show.html",gin.H{
 		"title":"hello",

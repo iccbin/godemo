@@ -33,6 +33,6 @@ func main() {
 	router.DELETE("/users/:id", users.Delete)
 	router.GET("/users-edit/:id", users.Edit)
 	router.PUT("/users/:id", users.Update)
-	router.GET("/users/:key", users.Show)
+	router.GET("/users/:id", users.Show)
 	router.Run(":3001")
 }
