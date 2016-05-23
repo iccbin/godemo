@@ -14,12 +14,16 @@ type [[.PluralizeTitle]]Controller struct {
 
 func (ctrl [[.PluralizeTitle]]Controller) Index(c *gin.Context) {
 	var [[.PluralizeName]] []models.[[.ModelName]]
-	ctrl.DB.Model(&models.[[.ModelName]]{}).Find(&[[.PluralizeName]])
+	err := ctrl.DB.Model(&models.[[.ModelName]]{}).Find(&[[.PluralizeName]])
+    if err != nil {
+        c.String(http.StatusOK, err.Error())
+    } else {
+        c.HTML(http.StatusOK, "index.html", gin.H{
+                "title": "index",
+                "[[.PluralizeName]]": [[.PluralizeName]],
+        })
+    }
 
-	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title": "index",
-		"[[.PluralizeName]]": [[.PluralizeName]],
-	})
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) New(c *gin.Context) {
@@ -29,18 +33,36 @@ func (ctrl [[.PluralizeTitle]]Controller) New(c *gin.Context) {
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) Create(c *gin.Context) {
-	[[.UnderscoreName]] := models.[[.ModelName]]{[[range $key,$value := .FieldMap]][[if ne $key "ID"]]
-	            [[$key]]:  c.PostForm("[[$value]]"),[[end]][[end]]
-	        }
-	ctrl.DB.NewRecord([[.UnderscoreName]])
-	ctrl.DB.Create(&[[.UnderscoreName]])
+    [[range $key,$value := .FieldMap]][[if ne $key "ID"]][[if eq $value.Type "int64"]]
+    [[$value.Name]], err := strconv.ParseInt(c.PostForm("[[$value.Name]]"),10,0)[[else if eq $value.Type "float64"]]
+    [[$value.Name]], err := strconv.ParseFloat(c.PostForm("[[$value.Name]]"), 64)[[else if eq $value.Type "bool"]]
+    [[$value.Name]], err := strconv.ParseBool(c.PostForm("[[$value.Name]]"))[[else if eq $value.Type "string"]]
+    [[$value.Name]] := c.PostForm("[[$value.Name]]")[[else if eq $value.Type "uint"]]
+    [[$value.Name]], err := strconv.ParseUint('c.PostForm[[$value.Name]]',10,0)[[end]][[end]][[end]]
 
-	c.Redirect(http.StatusMovedPermanently, "/")
+    if err != nil {
+    		c.String(http.StatusOK, err.Error())
+    		return
+    }
+	[[.UnderscoreName]] := models.[[.ModelName]]{[[range $key,$value := .FieldMap]][[if ne $key "ID"]]
+	            [[$key]]:  [[$value.Name]],[[end]][[end]]
+	        }
+	err = ctrl.DB.Create(&[[.UnderscoreName]]).Error
+    if err != nil {
+    		c.String(http.StatusOK, "create user error")
+    } else {
+    		c.Redirect(http.StatusMovedPermanently, "/")
+    }
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) Delete(c *gin.Context) {
-	[[.UnderscoreName]]Id, _ := strconv.Atoi(c.Param("id"))
-	[[.UnderscoreName]] := models.[[.ModelName]]{ID: uint([[.UnderscoreName]]Id)}
+	[[.UnderscoreName]]Id, err := strconv.ParseUint(c.Param("id"), 10, 0)
+	if err != nil {
+        c.String(http.StatusOK, err.Error())
+        return
+    }
+
+	[[.UnderscoreName]] := models.[[.ModelName]]{ID: [[.UnderscoreName]]Id}
 
 	err := ctrl.DB.Delete(&[[.UnderscoreName]]).Error
 	if err != nil {
@@ -51,10 +73,15 @@ func (ctrl [[.PluralizeTitle]]Controller) Delete(c *gin.Context) {
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) Edit(c *gin.Context) {
-	[[.UnderscoreName]]Id, _ := strconv.Atoi(c.Param("id"))
-	[[.UnderscoreName]] := models.[[.ModelName]]{ID: uint([[.UnderscoreName]]Id)}
+	[[.UnderscoreName]]Id, err := strconv.ParseUint(c.Param("id"), 10, 0)
+	if err != nil {
+            c.String(http.StatusOK, err.Error())
+            return
+    }
 
-	err := ctrl.DB.First(&[[.UnderscoreName]]).Error
+	[[.UnderscoreName]] := models.[[.ModelName]]{ID: [[.UnderscoreName]]Id}
+
+	err = ctrl.DB.First(&[[.UnderscoreName]]).Error
 	if err != nil {
 		c.String(http.StatusOK, err.Error())
 	} else {
@@ -66,11 +93,19 @@ func (ctrl [[.PluralizeTitle]]Controller) Edit(c *gin.Context) {
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) Update(c *gin.Context) {
-	[[.UnderscoreName]]Id, _ := strconv.Atoi(c.Param("id"))
-	id := uint([[.UnderscoreName]]Id)[[range $key,$value := .FieldMap]] [[if ne $key "ID"]]
-	[[$value]] := c.PostForm("[[$value]]")[[end]][[end]]
+	[[range $key,$value := .FieldMap]][[if eq $value.Type "int64"]]
+    [[$value.Name]], err := strconv.ParseInt(c.PostForm("[[$value.Name]]"),10,0)[[else if eq $value.Type "float64"]]
+    [[$value.Name]], err := strconv.ParseFloat(c.PostForm("[[$value.Name]]"), 64)[[else if eq $value.Type "bool"]]
+    [[$value.Name]], err := strconv.ParseBool(c.PostForm("[[$value.Name]]"))[[else if eq $value.Type "string"]]
+    [[$value.Name]] := c.PostForm("[[$value.Name]]")[[else if eq $value.Type "uint"]]
+    [[$value.Name]], err := strconv.ParseUint(c.PostForm("[[$value.Name]]"),10,0)[[end]][[end]]
+    if err != nil {
+        c.String(http.StatusOK, err.Error())
+        return
+    }
+
 	[[.UnderscoreName]] := models.[[.ModelName]]{[[range $key,$value := .FieldMap]]
-                [[$key]]:  c.PostForm("[[$value]]"),[[end]]
+                    [[$key]]:  [[$value.Name]],[[end]]
             }
 	err := ctrl.DB.Save(&[[.UnderscoreName]]).Error
 	if err != nil {
@@ -82,12 +117,16 @@ func (ctrl [[.PluralizeTitle]]Controller) Update(c *gin.Context) {
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) Show(c *gin.Context)  {
-	var [[.PluralizeName]] []models.[[.ModelName]]
-	ctrl.DB.Where("id = ?", c.Param("id")).Find(&[[.PluralizeName]])
+	var [[.UnderscoreName]] models.[[.ModelName]]
+	err := ctrl.DB.First(&user, c.Param("id")).Error
+    if err != nil {
+    	c.String(http.StatusOK, err.Error())
+    } else {
+         c.HTML(http.StatusOK,"show.html",gin.H{
+    		"title":"show",
+    		"[[.UnderscoreName]]":[[.UnderscoreName]],
+    	 })
+    }
 
-	c.HTML(http.StatusOK,"show.html",gin.H{
-		"title":"hello",
-		"[[.PluralizeName]]":[[.PluralizeName]],
-	})
 
 }

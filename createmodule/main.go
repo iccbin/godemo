@@ -12,6 +12,12 @@ import (
 	"godemo/createmodule/example/models"
 
 	"github.com/chuckpreslar/inflect"
+	"strconv"
+)
+
+const (
+	TemplatePath = "./templates/"
+	ControllerPath = "./product/"
 )
 
 type ModelInfo struct {
@@ -31,7 +37,7 @@ func CreateFile(modelInfo ModelInfo) error {
 	}
 
 
-	files,err := ListFile("./templates/", ".tmpl")
+	files,err := ListFile(TemplatePath, ".tmpl")
 	if err != nil {
 		return err
 	}
@@ -45,7 +51,7 @@ func CreateFile(modelInfo ModelInfo) error {
 			newFileName = strings.TrimSuffix(fileName, "tmpl") + "html"
 		}
 
-		file, err := os.OpenFile("./product/"+ newFileName, os.O_CREATE | os.O_RDWR, 0666)
+		file, err := os.OpenFile(ControllerPath + newFileName, os.O_CREATE | os.O_RDWR, 0666)
 		if err != nil {
 			return err
 		}
@@ -99,8 +105,10 @@ func ReflectModel(name string, i interface{}) (ctrl ModelInfo, err error) {
 		return info, fmt.Errorf("interface kind is not struct")
 	}
 
-	info.FieldMap = make(map[string]interface{})
+
 	var typeInfo struct{Type string; Name string}
+	info.FieldMap = make(map[string]interface{})
+
 	for i := 0; i < val.NumField(); i++ {
 		typeField := val.Type().Field(i)
 		typeInfo.Type = typeField.Type.String()
@@ -129,6 +137,6 @@ func createCode(name string, i interface{})  {
 }
 
 func main()  {
-
+	strconv.ParseInt("112",10,0)
 	createCode("user", &models.User{})
 }

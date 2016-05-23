@@ -15,16 +15,20 @@ type UsersController struct {
 }
 
 func (ctrl UsersController) Index(c *gin.Context) {
-	var users []models.User
-	err := ctrl.DB.Model(&models.User{}).Find(&users).Error
-	if err != nil {
-		c.String(http.StatusOK, err.Error())
-	} else {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "index",
-			"users": users,
-		})
-	}
+	//var users []models.User
+	//err := ctrl.DB.Model(&models.User{}).Find(&users).Error
+	//if err != nil {
+	//	c.String(http.StatusOK, err.Error())
+	//} else {
+	//	c.HTML(http.StatusOK, "index.html", gin.H{
+	//		"title": "index",
+	//		"users": users,
+	//	})
+	//}
+
+	ctrl.Render.HTML(c.Writer, http.StatusOK, "users/show", gin.H{
+		"title":"hello",
+	})
 
 }
 
@@ -59,10 +63,8 @@ func (ctrl UsersController) Create(c *gin.Context) {
 }
 
 func (ctrl UsersController) Delete(c *gin.Context) {
-	userId, _ := strconv.Atoi(c.Param("id"))
-	user := models.User{ID: uint(userId)}
-
-	err := ctrl.DB.Delete(&user).Error
+	user := models.User{}
+	err := ctrl.DB.Delete(&user, c.Param("id")).Error
 	if err != nil {
 		c.String(http.StatusOK, err.Error())
 	} else {
@@ -120,7 +122,8 @@ func (ctrl UsersController) Show(c *gin.Context)  {
 	if err != nil {
 		c.String(http.StatusOK, err.Error())
 	} else {
-		c.HTML(http.StatusOK,"show.html",gin.H{
+		//w http.ResponseWriter, status int, name string, binding interface{}, htmlOpt ...HTMLOptions
+		ctrl.Render.HTML(c.Writer, http.StatusOK,"show.html",gin.H{
 			"title":"hello",
 			"user":user,
 		})

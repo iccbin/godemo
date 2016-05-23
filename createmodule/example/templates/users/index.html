@@ -2,27 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
-<div>
-    <input id="key" type="text" name="key" placeholder="查询" >
-    <input type="button" value="查询" onclick="getUsers()">
-</div>
+
 
 <div>
-    <table>
+    <table class="table">
         <tr>
             <th>ID</th>
             <th>NAME</th>
             <th>PASSWORD</th>
+            <th>Money</th>
+            <th>Age</th>
+            <th>Gender</th>
             <th>OPERATING</th>
         </tr>
         {{range .users}}
         <tr id="{{.ID}}">
-            <td>{{.ID}}</td>
+            <td><a href="/users/{{.ID}}">{{.ID}}</a></td>
             <td>{{.Name}}</td>
             <td>{{.Password}}</td>
+            <td>{{.Money}}</td>
+            <td>{{.Age}}</td>
+            <td>{{.Gender}}</td>
             <td>
                 <input type="button" value="添加" onclick="location.href='/users-new'">
                 <input type="button" value="删除" class="delete" onclick="deleteUser('{{.ID}}')">
@@ -47,13 +51,6 @@
             }
         });
     }
-
-    function getUsers(){
-        var key = $('#key').val();
-        window.location.href = "/users/" + key
-
-    }
-
 
 </script>
 </body>
