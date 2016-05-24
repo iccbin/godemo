@@ -1,66 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.title}}</title>
-</head>
-<body>
-    <div>
-        <input id="key" type="text" name="key" placeholder="查询" >
-        <input type="button" value="查询" onclick="getUsers()">
-    </div>
-    <div>
-        <table>
-            <tr>
+<div class="container">
+    <a href="/users/new" class="btn btn-info">new</a>
+
+    <table class="table">
+        <tr>
             
-                <th>Age</th>
+            <th>Age</th>
             
-                <th>Gender</th>
+            <th>CreatedAt</th>
             
-                <th>ID</th>
+            <th>DeletedAt</th>
             
-                <th>Money</th>
+            <th>Gender</th>
             
-                <th>Name</th>
+            <th>ID</th>
             
-                <th>Password</th>
+            <th>Money</th>
             
-                <th>OPERATING</th>
-            </tr>
-            {{range .users}}
-            <tr>
+            <th>Name</th>
             
-                <td>{{.Age}}</td>
+            <th>Password</th>
             
-                <td>{{.Gender}}</td>
+            <th>UpdatedAt</th>
             
-                <td>{{.ID}}</td>
+            <th>OPERATING</th>
+        </tr>
+        {{range .users}}
+        <tr>
+            <td><a href="/users-show/{{.ID}}" class="btn btn-link">{{.ID}}</a></td>
             
-                <td>{{.Money}}</td>
+            <td>{{.Age}}</td>
             
-                <td>{{.Name}}</td>
+            <td>{{.CreatedAt}}</td>
             
-                <td>{{.Password}}</td>
+            <td>{{.DeletedAt}}</td>
             
-                <td>
-                    <input type="button" value="添加" onclick="location.href='/users-new'">
-                    <input type="button" value="删除" class="delete" onclick="deleteUser('{{.ID}}')">
-                    <input type="button" value="编辑" onclick="location.href='/users-edit/{{.ID}}'">
-                </td>
-            </tr>
-            {{end}}
-        </table>
-    </div>
-    <script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script>
-        function deleteUser(id) {
+            <td>{{.Gender}}</td>
+            
+            <td>{{.Money}}</td>
+            
+            <td>{{.Name}}</td>
+            
+            <td>{{.Password}}</td>
+            
+            <td>{{.UpdatedAt}}</td>
+            
+            <td>
+                <input type="button" value="删除" class="btn btn-danger btn-remove" data-id="{{.ID}}">
+                <a href="/users-edit/{{.ID}}" class="btn btn-warning">编辑</a>
+            </td>
+
+        </tr>
+        {{end}}
+    </table>
+</div>
+
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".btn-remove").on('click', function (e) {
+            e.preventDefault();
             $.ajax({
-                url: '/users/' + id,
+                url: '/users/' + $(this).data("id"),
                 type: 'DELETE',
-                success: function (response) {
-                    if (response == "ok"){
-                        var tr = document.getElementById(id);
-                        tr.remove();
+                success: function (response, textStatus, jqXHR) {
+                    if (response == "success") {
+                        $(".btn-remove").parent().parent().remove();
+                    }
+                },
+                error: function (requestObject, error, errorThrown) {
+
+                }
+            });
+        });
+    });
+</script>
+nse == "ok"){
+                        alert(this + $(this));
+//                        var tr = this;
+//                        tr.remove();
                     }
                 }
             });

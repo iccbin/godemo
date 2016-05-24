@@ -1,25 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.title}}</title>
-</head>
-<body>
-<div>
-    <table>
-        <tr>
-           [[range $key,$value := .FieldMap]]
-           <th>[[$key]]</th>
-           [[end]]
-        </tr>
-        {{range .[[.PluralizeName]]}}
-        <tr id="{{.ID}}">
-            [[range $key,$value := .FieldMap]]
-            <td>{{.[[$key]]}}</td>
-            [[end]]
-        </tr>
-        {{end}}
-    </table>
-</div>
-</body>
-</html>
+<table class="table">
+    <tr>
+        [[range $key,$value := .FieldMap]]
+        <th>[[$key]]</th>
+        [[end]]
+    </tr>
+    {{range .[[.PluralizeName]]}}
+    <tr>
+        <td><a href="/[[.PluralizeName]]-show/{{.ID}}" class="btn btn-link">{{.ID}}</a></td>
+        [[range $key,$value := .FieldMap]][[if ne $key "ID"]]
+        <td>{{.[[$key]]}}</td>
+        [[end]][[end]]
+    </tr>
+    {{end}}
+</table>

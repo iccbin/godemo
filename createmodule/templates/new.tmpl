@@ -1,15 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.title}}</title>
-</head>
-<body>
-<form action="/[[.PluralizeName]]/" method="post">
-    [[range $key,$value := .FieldMap]]
-    <input name="[[$value]]" type="text">
-    [[end]]
-    <input type="submit">
+
+<form  id="new[[.ModelName]]" class="form-horizontal" action="/[[.PluralizeName]]" method="post">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="name" placeholder="name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Password</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="password" placeholder="password">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Money</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="money" placeholder="money">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Age</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="age" placeholder="age">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Gender</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="gender" placeholder="gender">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">提交</button>
+            </div>
+        </div>
+    </div>
+
+
 </form>
-</body>
-</html>
+
+<script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+    function ajaxSubmit(form, fn){
+        var dataPara = getFormJson(form)
+        $.ajax({
+            url:form.action,
+            type:form.method,
+            data:dataPara,
+            success:fn
+        });
+    }
+    function getFormJson(form) {
+        var o = {};
+        var a = $(form).serializeArray();
+        $.each(a, function () {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+
+        return o;
+    }
+
+    $(document).ready(function(){
+        $('#new[[.ModelName]]').bind('submit', function(){
+            ajaxSubmit(this, function(data){
+
+                if (data == 'success') {
+                    window.location.href = "/";
+                } else {
+                    alert(data);
+                }
+            });
+            return false;
+        });
+    });
+</script>

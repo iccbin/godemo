@@ -1,28 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form  id="fileForm" >
-    <input type="text" value="{{.user.Name}}" name="name" id="title">
-    <input type="text" value="{{.user.Password}}" name="password">
+<form  id="editUser" class="form-horizontal" action="/users/{{.user.ID}}" method="post">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="name" value="{{.user.Name}}" name="name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Password</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="password" value="{{.user.Password}}" name="password">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Money</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="money" value="{{.user.Money}}" name="money">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Age</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="age" value="{{.user.Age}}" name="age">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Gender</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="gender" value="{{.user.Gender}}" name="gender">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">提交</button>
+            </div>
+        </div>
+    </div>
 
 </form>
-<button  onclick="putUser('{{.user.ID}}');">提交</button>
 <script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-<script>
-    function putUser(data) {
+<script type="text/javascript">
+    function ajaxSubmit(form, fn){
+        var dataPara = getFormJson(form)
         $.ajax({
-            type:'PUT',
-            url: '/users/' + data,
-            data:$('#fileForm').serialize(),
-            success: function(response) {
-                window.location.href = "/"
-            }});
+            url:form.action,
+            type:"PUT",
+            data:dataPara,
+            success:fn
+        });
     }
-</script>
-</body>
+    function getFormJson(form) {
+        var newData = {};
+        var oldData = $(form).serializeArray();
+        $.each(oldData, function () {
+            if (newData[this.name] !== undefined) {
+                if (!newData[this.name].push) {
+                    newData[this.name] = [newData[this.name]];
+                }
+                newData[this.name].push(this.value || '');
+            } else {
+                newData[this.name] = this.value || '';
+            }
+        });
 
-</html>
+        return newData;
+    }
+
+    $(document).ready(function(){
+        $('#editUser').bind('submit', function(){
+            ajaxSubmit(this, function(data){
+
+                if (data == 'success') {
+                    window.location.href = "/";
+                } else {
+                    alert(data);
+                }
+            });
+            return false;
+        });
+    });
+</script>

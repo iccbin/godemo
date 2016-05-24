@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.title}}</title>
-    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
-</head>
-<body>
+<div class="container">
+    <a href="/users/new" class="btn btn-info">new</a>
 
-
-<div>
     <table class="table">
         <tr>
             <th>ID</th>
@@ -20,38 +12,40 @@
             <th>OPERATING</th>
         </tr>
         {{range .users}}
-        <tr id="{{.ID}}">
-            <td><a href="/users/{{.ID}}">{{.ID}}</a></td>
+        <tr>
+            <td><a href="/users-show/{{.ID}}" class="btn btn-link">{{.ID}}</a></td>
             <td>{{.Name}}</td>
             <td>{{.Password}}</td>
             <td>{{.Money}}</td>
             <td>{{.Age}}</td>
             <td>{{.Gender}}</td>
             <td>
-                <input type="button" value="添加" onclick="location.href='/users-new'">
-                <input type="button" value="删除" class="delete" onclick="deleteUser('{{.ID}}')">
-                <input type="button" value="编辑" onclick="location.href='/users-edit/{{.ID}}'">
+                <input type="button" value="删除" class="btn btn-danger btn-remove" data-id="{{.ID}}">
+                <a href="/users-edit/{{.ID}}" class="btn btn-warning">编辑</a>
             </td>
+
         </tr>
         {{end}}
     </table>
 </div>
 
-<script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script>
-    function deleteUser(id) {
-        $.ajax({
-            url: '/users/' + id,
-            type: 'DELETE',
-            success: function (response) {
-                if (response == "ok"){
-                    var tr = document.getElementById(id);
-                    tr.remove();
-                }
-            }
-        });
-    }
+    $(document).ready(function () {
+        $(".btn-remove").on('click', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/users/' + $(this).data("id"),
+                type: 'DELETE',
+                success: function (response, textStatus, jqXHR) {
+                    if (response == "success") {
+                        $(".btn-remove").parent().parent().remove();
+                    }
+                },
+                error: function (requestObject, error, errorThrown) {
 
+                }
+            });
+        });
+    });
 </script>
-</body>
-</html>

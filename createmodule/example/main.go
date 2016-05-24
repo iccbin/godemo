@@ -19,8 +19,6 @@ func main() {
 	router := gin.Default()
 
 	router.Static("/assets", "./assets")
-	//router.LoadHTMLGlob("./templates/users/*")
-
 
 	mysqlConfig := config.Mysql{DataBase: "study", UserName: "root", Password: "123456", Parameters: "charset=utf8&parseTime=True&loc=Local"}
 	DB, err := gorm.Open("mysql", mysqlConfig.String())
@@ -32,12 +30,12 @@ func main() {
 	users := controllers.UsersController{application}
 
 	router.Any("/", users.Index)
-	router.GET("/users-new", users.New)
+	router.GET("/users/new", users.New)
 	router.POST("/users", users.Create)
 	router.DELETE("/users/:id", users.Delete)
 	router.GET("/users-edit/:id", users.Edit)
 	router.PUT("/users/:id", users.Update)
-	router.GET("/users/:id", users.Show)
+	router.GET("/users-show/:id", users.Show)
 	router.Run(":3001")
 }
 
@@ -56,7 +54,7 @@ func loadRender() *render.Render {
 		PrefixJSON: []byte(""),
 		PrefixXML: []byte(""),
 		HTMLContentType: "text/html",
-		IsDevelopment: false,
+		IsDevelopment: true,
 		UnEscapeHTML: false,
 		StreamingJSON: false,
 		RequirePartials: true,

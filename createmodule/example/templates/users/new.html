@@ -1,14 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.title}}</title>
-</head>
-<body>
-<form action="/users/" method="post">
-    <input name="name" type="text" placeholder="name">
-    <input name="password" type="password" placeholder="password" >
-    <input type="submit">
+
+<form  id="newUser" class="form-horizontal" action="/users" method="post">
+    <div class="form-horizontal">
+        [[range $key,$value := .FieldMap]][[if ne $key "ID"]]
+        <td>{{.[[$key]]}}</td>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">[[$key]]</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="[[$value.name]]" value="{{.[[.UnderscoreName]].[[$key]]}}" name="[[$value.name]]">
+            </div>
+        </div>
+        [[end]][[end]]
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">提交</button>
+            </div>
+        </div>
+    </div>
 </form>
-</body>
-</html>
+
+<script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+    function ajaxSubmit(form, fn){
+        var dataPara = getFormJson(form)
+        $.ajax({
+            url:form.action,
+            type:form.method,
+            data:dataPara,
+            success:fn
+        });
+    }
+    function getFormJson(form) {
+        var newData = {};
+        var oldData = $(form).serializeArray();
+        $.each(oldData, function () {
+            if (newData[this.name] !== undefined) {
+                if (!newData[this.name].push) {
+                    newData[this.name] = [newData[this.name]];
+                }
+                newData[this.name].push(this.value || '');
+            } else {
+                newData[this.name] = this.value || '';
+            }
+        });
+
+        return newData;
+    }
+
+    $(document).ready(function(){
+        $('#newUser').bind('submit', function(){
+            ajaxSubmit(this, function(data){
+
+                if (data == 'success') {
+                    window.location.href = "/";
+                } else {
+                    alert(data);
+                }
+            });
+            return false;
+        });
+    });
+</script>

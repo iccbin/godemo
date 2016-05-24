@@ -1,59 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.title}}</title>
-</head>
-<body>
-    <div>
-        <input id="key" type="text" name="key" placeholder="查询" >
-        <input type="button" value="查询" onclick="get[[.PluralizeTitle]]()">
-    </div>
-    <div>
-        <table>
-            <tr>
+<div class="container">
+    <a href="/[[.PluralizeName]]/new" class="btn btn-info">new</a>
+
+    <table class="table">
+        <tr>
             [[range $key,$value := .FieldMap]]
-                <th>[[$key]]</th>
+            <th>[[$key]]</th>
             [[end]]
-                <th>OPERATING</th>
-            </tr>
-            {{range .[[.PluralizeName]]}}
-            <tr>
-            [[range $key,$value := .FieldMap]]
-                <td>{{.[[$key]]}}</td>
-            [[end]]
-                <td>
-                    <input type="button" value="添加" onclick="location.href='/[[.PluralizeName]]-new'">
-                    <input type="button" value="删除" class="delete" onclick="delete[[.ModelName]]('{{.ID}}')">
-                    <input type="button" value="编辑" onclick="location.href='/[[.PluralizeName]]-edit/{{.ID}}'">
-                </td>
-            </tr>
-            {{end}}
-        </table>
-    </div>
-    <script  src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script>
-        function delete[[.ModelName]](id) {
+            <th>OPERATING</th>
+        </tr>
+        {{range .[[.PluralizeName]]}}
+        <tr>
+            <td><a href="/[[.PluralizeName]]-show/{{.ID}}" class="btn btn-link">{{.ID}}</a></td>
+            [[range $key,$value := .FieldMap]][[if ne $key "ID"]]
+            <td>{{.[[$key]]}}</td>
+            [[end]][[end]]
+            <td>
+                <input type="button" value="删除" class="btn btn-danger btn-remove" data-id="{{.ID}}">
+                <a href="/[[.PluralizeName]]-edit/{{.ID}}" class="btn btn-warning">编辑</a>
+            </td>
+
+        </tr>
+        {{end}}
+    </table>
+</div>
+
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".btn-remove").on('click', function (e) {
+            e.preventDefault();
             $.ajax({
-                url: '/[[.PluralizeName]]/' + id,
+                url: '/[[.PluralizeName]]/' + $(this).data("id"),
                 type: 'DELETE',
-                success: function (response) {
-                    if (response == "ok"){
-                        var tr = document.getElementById(id);
-                        tr.remove();
+                success: function (response, textStatus, jqXHR) {
+                    if (response == "success") {
+                        $(".btn-remove").parent().parent().remove();
                     }
+                },
+                error: function (requestObject, error, errorThrown) {
+
                 }
             });
-        }
-
-        function get[[.PluralizeTitle]](){
-            var key = $('#key').val();
-            window.location.href = "/[[.PluralizeName]]/" + key
-
-        }
-
-
-    </script>
-</body>
-</html>
-
+        });
+    });
+</script>

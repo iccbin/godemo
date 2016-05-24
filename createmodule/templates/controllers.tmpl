@@ -15,10 +15,11 @@ type [[.PluralizeTitle]]Controller struct {
 func (ctrl [[.PluralizeTitle]]Controller) Index(c *gin.Context) {
 	var [[.PluralizeName]] []models.[[.ModelName]]
 	err := ctrl.DB.Model(&models.[[.ModelName]]{}).Find(&[[.PluralizeName]])
+
     if err != nil {
-        c.String(http.StatusOK, err.Error())
+        ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
     } else {
-        c.HTML(http.StatusOK, "index.html", gin.H{
+        ctrl.Render.HTML(c.Writer, http.StatusOK, "[[.PluralizeName]]/index", gin.H{
                 "title": "index",
                 "[[.PluralizeName]]": [[.PluralizeName]],
         })
@@ -27,7 +28,7 @@ func (ctrl [[.PluralizeTitle]]Controller) Index(c *gin.Context) {
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) New(c *gin.Context) {
-	c.HTML(http.StatusOK, "new.html", gin.H{
+	ctrl.Render.HTML(c.Writer,http.StatusOK, "[[.PluralizeName]]/new", gin.H{
 		"title": "new",
 	})
 }
@@ -41,24 +42,24 @@ func (ctrl [[.PluralizeTitle]]Controller) Create(c *gin.Context) {
     [[$value.Name]], err := strconv.ParseUint('c.PostForm[[$value.Name]]',10,0)[[end]][[end]][[end]]
 
     if err != nil {
-    		c.String(http.StatusOK, err.Error())
-    		return
+    	ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
+    	return
     }
 	[[.UnderscoreName]] := models.[[.ModelName]]{[[range $key,$value := .FieldMap]][[if ne $key "ID"]]
 	            [[$key]]:  [[$value.Name]],[[end]][[end]]
 	        }
 	err = ctrl.DB.Create(&[[.UnderscoreName]]).Error
     if err != nil {
-    		c.String(http.StatusOK, "create user error")
+    		ctrl.Render.Text(c.Writer, http.StatusOK, "create user error")
     } else {
-    		c.Redirect(http.StatusMovedPermanently, "/")
+    		ctrl.Render.Text(c.Writer, http.StatusOK, "success")
     }
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) Delete(c *gin.Context) {
 	[[.UnderscoreName]]Id, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
-        c.String(http.StatusOK, err.Error())
+        ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
         return
     }
 
@@ -66,16 +67,16 @@ func (ctrl [[.PluralizeTitle]]Controller) Delete(c *gin.Context) {
 
 	err := ctrl.DB.Delete(&[[.UnderscoreName]]).Error
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		c.String(http.StatusOK, "ok")
+		ctrl.Render.Text(c.Writer, http.StatusOK, "success")
 	}
 }
 
 func (ctrl [[.PluralizeTitle]]Controller) Edit(c *gin.Context) {
 	[[.UnderscoreName]]Id, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
-            c.String(http.StatusOK, err.Error())
+            ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
             return
     }
 
@@ -83,9 +84,9 @@ func (ctrl [[.PluralizeTitle]]Controller) Edit(c *gin.Context) {
 
 	err = ctrl.DB.First(&[[.UnderscoreName]]).Error
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		c.HTML(http.StatusOK, "edit.html", gin.H{
+		ctrl.Render.HTML(c.Writer, http.StatusOK, "[[.PluralizeName]]/edit", gin.H{
 			"title": "edit",
 			"[[.UnderscoreName]]":  [[.UnderscoreName]],
 		})
@@ -100,7 +101,7 @@ func (ctrl [[.PluralizeTitle]]Controller) Update(c *gin.Context) {
     [[$value.Name]] := c.PostForm("[[$value.Name]]")[[else if eq $value.Type "uint"]]
     [[$value.Name]], err := strconv.ParseUint(c.PostForm("[[$value.Name]]"),10,0)[[end]][[end]]
     if err != nil {
-        c.String(http.StatusOK, err.Error())
+        ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
         return
     }
 
@@ -109,9 +110,9 @@ func (ctrl [[.PluralizeTitle]]Controller) Update(c *gin.Context) {
             }
 	err := ctrl.DB.Save(&[[.UnderscoreName]]).Error
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		c.String(http.StatusOK, "ok")
+		ctrl.Render.Text(c.Writer, http.StatusOK, "success")
 	}
 
 }
@@ -120,13 +121,12 @@ func (ctrl [[.PluralizeTitle]]Controller) Show(c *gin.Context)  {
 	var [[.UnderscoreName]] models.[[.ModelName]]
 	err := ctrl.DB.First(&user, c.Param("id")).Error
     if err != nil {
-    	c.String(http.StatusOK, err.Error())
+    	ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
     } else {
-         c.HTML(http.StatusOK,"show.html",gin.H{
+        ctrl.Render.Text(c.Writer, "[[.PluralizeName]]/show",gin.H{
     		"title":"show",
     		"[[.UnderscoreName]]":[[.UnderscoreName]],
     	 })
     }
-
 
 }

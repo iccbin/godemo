@@ -1,41 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.title}}</title>
-</head>
-<body>
-<div>
-    <table>
-        <tr>
-           
-           <th>Age</th>
-           
-           <th>Gender</th>
-           
-           <th>ID</th>
-           
-           <th>Money</th>
-           
-           <th>Name</th>
-           
-           <th>Password</th>
-           
-        </tr>
-        {{range .users}}
-        <tr id="{{.ID}}">
-            
-            <td>{{.Age}}</td>
-            
-            <td>{{.Gender}}</td>
-            
-            <td>{{.ID}}</td>
-            
+<table class="table">
+    <tr>
+        
+        <th>Age</th>
+        
+        <th>CreatedAt</th>
+        
+        <th>DeletedAt</th>
+        
+        <th>Gender</th>
+        
+        <th>ID</th>
+        
+        <th>Money</th>
+        
+        <th>Name</th>
+        
+        <th>Password</th>
+        
+        <th>UpdatedAt</th>
+        
+    </tr>
+    {{range .users}}
+    <tr>
+        <td><a href="/users-show/{{.ID}}" class="btn btn-link">{{.ID}}</a></td>
+        
+        <td>{{.Age}}</td>
+        
+        <td>{{.CreatedAt}}</td>
+        
+        <td>{{.DeletedAt}}</td>
+        
+        <td>{{.Gender}}</td>
+        
+        <td>{{.Money}}</td>
+        
+        <td>{{.Name}}</td>
+        
+        <td>{{.Password}}</td>
+        
+        <td>{{.UpdatedAt}}</td>
+        
+    </tr>
+    {{end}}
+</table>       
             <td>{{.Money}}</td>
             
             <td>{{.Name}}</td>
             
             <td>{{.Password}}</td>
+            
+            <td>{{.UpdatedAt}}</td>
             
         </tr>
         {{end}}

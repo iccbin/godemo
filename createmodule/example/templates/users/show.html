@@ -1,30 +1,20 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-    <!--<meta charset="UTF-8">-->
-    <!--<title>{{.title}}</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div>-->
-    <!--<table>-->
-        <!--<tr>-->
-            <!--<th>ID</th>-->
-            <!--<th>NAME</th>-->
-            <!--<th>PASSWORD</th>-->
-            <!--<th>Money</th>-->
-        <!--</tr>-->
-        <!--{{range .users}}-->
-        <!--<tr id="{{.ID}}">-->
-            <!--<td>{{.ID}}</td>-->
-            <!--<td>{{.Name}}</td>-->
-            <!--<td>{{.Password}}</td>-->
-        <!--</tr>-->
-        <!--{{end}}-->
-    <!--</table>-->
-<!--</div>-->
-<!--</body>-->
-<!--</html>-->
-
-{{define "content"}}
-showdfgadfadsfasdfaaaaaaaaaaaaaaaaaasadfasdfasdfasdfadsf
-{{end}}
+<div class="container">
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PASSWORD</th>
+            <th>Money</th>
+            <th>Age</th>
+            <th>Gender</th>
+        </tr>
+        <tr>
+            <td>{{.user.ID}}</td>
+            <td>{{.user.Name}}</td>
+            <td>{{.user.Password}}</td>
+            <td>{{.user.Money}}</td>
+            <td>{{.user.Age}}</td>
+            <td>{{.user.Gender}}</td>
+        </tr>
+    </table>
+</div>

@@ -15,38 +15,44 @@ type UsersController struct {
 }
 
 func (ctrl UsersController) Index(c *gin.Context) {
-	//var users []models.User
-	//err := ctrl.DB.Model(&models.User{}).Find(&users).Error
-	//if err != nil {
-	//	c.String(http.StatusOK, err.Error())
-	//} else {
-	//	c.HTML(http.StatusOK, "index.html", gin.H{
-	//		"title": "index",
-	//		"users": users,
-	//	})
-	//}
+	var users []models.User
+	err := ctrl.DB.Model(&models.User{}).Find(&users).Error
 
-	ctrl.Render.HTML(c.Writer, http.StatusOK, "users/show", gin.H{
-		"title":"hello",
-	})
+	if err != nil {
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
+	} else {
+		ctrl.Render.HTML(c.Writer, http.StatusOK, "users/index", gin.H{
+			"title": "index",
+			"users": users,
+		})
+	}
 
 }
 
 func (ctrl UsersController) New(c *gin.Context) {
-	c.HTML(http.StatusOK, "new.html", gin.H{
+	ctrl.Render.HTML(c.Writer, http.StatusOK, "users/new", gin.H{
 		"title": "new",
 	})
 }
 
 func (ctrl UsersController) Create(c *gin.Context) {
 	money,err := strconv.ParseFloat(c.PostForm("money"), 64)
+	if err != nil {
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
+		return
+	}
 	name := c.PostForm("name")
+	if name == "" {
+		ctrl.Render.Text(c.Writer, http.StatusOK, "name is not null")
+		return
+	}
 	password := c.PostForm("password")
 	gender,err := strconv.ParseBool(c.PostForm("gender"))
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 		return
 	}
+
 	user := models.User{
 		Name: name,
 		Password: password,
@@ -55,21 +61,22 @@ func (ctrl UsersController) Create(c *gin.Context) {
 	}
 	err = ctrl.DB.Create(&user).Error
 	if err != nil {
-		c.String(http.StatusOK, "create user error")
+		ctrl.Render.Text(c.Writer, http.StatusOK,  err.Error())
 	} else {
-		c.Redirect(http.StatusMovedPermanently, "/")
+		ctrl.Render.Text(c.Writer, http.StatusOK, "success")
 	}
 
 }
 
 func (ctrl UsersController) Delete(c *gin.Context) {
-	user := models.User{}
-	err := ctrl.DB.Delete(&user, c.Param("id")).Error
-	if err != nil {
-		c.String(http.StatusOK, err.Error())
-	} else {
-		c.String(http.StatusOK, "ok")
-	}
+	//user := models.User{}
+	//err := ctrl.DB.Delete(&user, c.Param("id")).Error
+	//if err != nil {
+	//	ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
+	//} else {
+	//	ctrl.Render.Text(c.Writer, http.StatusOK, "success")
+	//}
+	ctrl.Render.Text(c.Writer, http.StatusOK, "success")
 }
 
 func (ctrl UsersController) Edit(c *gin.Context) {
@@ -79,9 +86,9 @@ func (ctrl UsersController) Edit(c *gin.Context) {
 
 	err := ctrl.DB.First(&user).Error
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		c.HTML(http.StatusOK, "edit.html", gin.H{
+		ctrl.Render.HTML(c.Writer, http.StatusOK, "users/edit", gin.H{
 			"title": "edit",
 			"user":  user,
 		})
@@ -95,9 +102,10 @@ func (ctrl UsersController) Update(c *gin.Context) {
 	money, err := strconv.ParseFloat(c.PostForm("money"), 64)
 	gender, err := strconv.ParseBool(c.PostForm("gender"))
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 		return
 	}
+
 	user := models.User{
 		ID: uint(userId),
 		Name: name,
@@ -108,9 +116,9 @@ func (ctrl UsersController) Update(c *gin.Context) {
 
 	err = ctrl.DB.Save(&user).Error
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		c.String(http.StatusOK, "ok")
+		ctrl.Render.Text(c.Writer, http.StatusOK, "success")
 	}
 
 }
@@ -120,11 +128,10 @@ func (ctrl UsersController) Show(c *gin.Context)  {
 	err := ctrl.DB.First(&user, c.Param("id")).Error
 
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		//w http.ResponseWriter, status int, name string, binding interface{}, htmlOpt ...HTMLOptions
-		ctrl.Render.HTML(c.Writer, http.StatusOK,"show.html",gin.H{
-			"title":"hello",
+		ctrl.Render.HTML(c.Writer,http.StatusOK,"users/show",gin.H{
+			"title":"show",
 			"user":user,
 		})
 	}

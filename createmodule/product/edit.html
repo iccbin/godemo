@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.title}}</title>
-</head>
 
-<body>
-<form  id="modelForm" >
-    
-    
-     <input type="text" value="{{.user.Age}}" name="{int64 age}">
+<form  id="editUser" class="form-horizontal" action="/users/{{.user.ID}}" method="post">
+    <div class="form-horizontal">
+        
+        <td>{{.Age}}</td>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Age</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" placeholder="me="{*time.Time deletedat}">
     
      <input type="text" value="{{.user.Gender}}" name="{bool gender}">
     
@@ -20,6 +17,8 @@
      <input type="text" value="{{.user.Name}}" name="{string name}">
     
      <input type="text" value="{{.user.Password}}" name="{string password}">
+    
+     <input type="text" value="{{.user.UpdatedAt}}" name="{time.Time updatedat}">
     
 </form>
 <button  onclick="putUser('{{.User.ID}}');">提交</button>

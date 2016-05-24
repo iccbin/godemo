@@ -15,10 +15,11 @@ type UsersController struct {
 func (ctrl UsersController) Index(c *gin.Context) {
 	var users []models.User
 	err := ctrl.DB.Model(&models.User{}).Find(&users)
+
     if err != nil {
-        c.String(http.StatusOK, err.Error())
+        ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
     } else {
-        c.HTML(http.StatusOK, "index.html", gin.H{
+        ctrl.Render.HTML(c.Writer, http.StatusOK, "users/index", gin.H{
                 "title": "index",
                 "users": users,
         })
@@ -27,7 +28,7 @@ func (ctrl UsersController) Index(c *gin.Context) {
 }
 
 func (ctrl UsersController) New(c *gin.Context) {
-	c.HTML(http.StatusOK, "new.html", gin.H{
+	ctrl.Render.HTML(c.Writer,http.StatusOK, "users/new", gin.H{
 		"title": "new",
 	})
 }
@@ -41,28 +42,31 @@ func (ctrl UsersController) Create(c *gin.Context) {
     password := c.PostForm("password")
 
     if err != nil {
-    		c.String(http.StatusOK, err.Error())
-    		return
+    	ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
+    	return
     }
 	user := models.User{
 	            Age:  age,
+	            CreatedAt:  createdat,
+	            DeletedAt:  deletedat,
 	            Gender:  gender,
 	            Money:  money,
 	            Name:  name,
 	            Password:  password,
+	            UpdatedAt:  updatedat,
 	        }
 	err = ctrl.DB.Create(&user).Error
     if err != nil {
-    		c.String(http.StatusOK, "create user error")
+    		ctrl.Render.Text(c.Writer, http.StatusOK, "create user error")
     } else {
-    		c.Redirect(http.StatusMovedPermanently, "/")
+    		ctrl.Render.Text(c.Writer, http.StatusOK, "success")
     }
 }
 
 func (ctrl UsersController) Delete(c *gin.Context) {
 	userId, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
-        c.String(http.StatusOK, err.Error())
+        ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
         return
     }
 
@@ -70,16 +74,16 @@ func (ctrl UsersController) Delete(c *gin.Context) {
 
 	err := ctrl.DB.Delete(&user).Error
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		c.String(http.StatusOK, "ok")
+		ctrl.Render.Text(c.Writer, http.StatusOK, "success")
 	}
 }
 
 func (ctrl UsersController) Edit(c *gin.Context) {
 	userId, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
-            c.String(http.StatusOK, err.Error())
+            ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
             return
     }
 
@@ -87,9 +91,9 @@ func (ctrl UsersController) Edit(c *gin.Context) {
 
 	err = ctrl.DB.First(&user).Error
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		c.HTML(http.StatusOK, "edit.html", gin.H{
+		ctrl.Render.HTML(c.Writer, http.StatusOK, "users/edit", gin.H{
 			"title": "edit",
 			"user":  user,
 		})
@@ -105,23 +109,26 @@ func (ctrl UsersController) Update(c *gin.Context) {
     name := c.PostForm("name")
     password := c.PostForm("password")
     if err != nil {
-        c.String(http.StatusOK, err.Error())
+        ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
         return
     }
 
 	user := models.User{
                     Age:  age,
+                    CreatedAt:  createdat,
+                    DeletedAt:  deletedat,
                     Gender:  gender,
                     ID:  id,
                     Money:  money,
                     Name:  name,
                     Password:  password,
+                    UpdatedAt:  updatedat,
             }
 	err := ctrl.DB.Save(&user).Error
 	if err != nil {
-		c.String(http.StatusOK, err.Error())
+		ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
 	} else {
-		c.String(http.StatusOK, "ok")
+		ctrl.Render.Text(c.Writer, http.StatusOK, "success")
 	}
 
 }
@@ -130,13 +137,12 @@ func (ctrl UsersController) Show(c *gin.Context)  {
 	var user models.User
 	err := ctrl.DB.First(&user, c.Param("id")).Error
     if err != nil {
-    	c.String(http.StatusOK, err.Error())
+    	ctrl.Render.Text(c.Writer, http.StatusOK, err.Error())
     } else {
-         c.HTML(http.StatusOK,"show.html",gin.H{
+        ctrl.Render.Text(c.Writer, "users/show",gin.H{
     		"title":"show",
     		"user":user,
     	 })
     }
 
-
-}
+}}
